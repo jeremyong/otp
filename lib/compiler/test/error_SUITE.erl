@@ -23,7 +23,7 @@
 -export([all/0, suite/0,groups/0,init_per_suite/1, end_per_suite/1, 
 	 init_per_group/2,end_per_group/2,
 	 head_mismatch_line/1,warnings_as_errors/1, bif_clashes/1,
-	 transforms/1]).
+	 transforms/1, column_number/1]).
 
 %% Used by transforms/1 test case.
 -export([parse_transform/2]).
@@ -36,7 +36,8 @@ all() ->
 
 groups() -> 
     [{p,test_lib:parallel(),
-      [head_mismatch_line,warnings_as_errors,bif_clashes,transforms]}].
+      [head_mismatch_line,warnings_as_errors,bif_clashes,transforms,
+       column_number]}].
 
 init_per_suite(Config) ->
     Config.
@@ -171,6 +172,15 @@ bif_clashes(Config) when is_list(Config) ->
 
 
 
+%% Tests that messages are correctly reported with column numbers
+%% if the column option is set.
+column_number(Config) when is_list(Config) ->
+    Ts1 = [{column_number_warning,
+	   <<"\nt(X) -> ok.">>,
+	   [return_warnings, export_all, column],
+	   {warning, [{{2, 3}, erl_lint, {unused_var, 'X'}}]}}],
+    ?line [] = run(Config, Ts1),
+    ok.
 
 %% Tests that a head mismatch is reported on the correct line (OTP-2125).
 head_mismatch_line(Config) when is_list(Config) ->
