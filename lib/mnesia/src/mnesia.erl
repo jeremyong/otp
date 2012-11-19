@@ -116,9 +116,6 @@
 	 %% QLC functions
 	 table/1, table/2,
 
-	 %% Mnemosyne exclusive
-	 get_activity_id/0, put_activity_id/1, % Not for public use
-
 	 %% Mnesia internal functions
 	 dirty_rpc/4,                          % Not for public use
 	 has_var/1, fun_select/7, fun_select/10, select_cont/3, dirty_sel_init/5,
@@ -2186,7 +2183,6 @@ system_info2(dump_log_time_threshold) -> mnesia_monitor:get_env(dump_log_time_th
 system_info2(dump_log_update_in_place) ->
     mnesia_monitor:get_env(dump_log_update_in_place);
 system_info2(max_wait_for_decision) -> mnesia_monitor:get_env(max_wait_for_decision);
-system_info2(embedded_mnemosyne) -> mnesia_monitor:get_env(embedded_mnemosyne);
 system_info2(ignore_fallback_at_startup) -> mnesia_monitor:get_env(ignore_fallback_at_startup);
 system_info2(fallback_error_function) ->  mnesia_monitor:get_env(fallback_error_function);
 system_info2(log_version) -> mnesia_log:version();
@@ -2224,7 +2220,6 @@ system_info_items(yes) ->
      dump_log_time_threshold,
      dump_log_update_in_place,
      dump_log_write_threshold,
-     embedded_mnemosyne,
      event_module,
      extra_db_nodes,
      fallback_activated,
@@ -2772,7 +2767,6 @@ pre_qlc(Opts, Tab) ->
 		    {value, {parent_value,{mnesia_activity,Aid}}} ->
 			{value,{stop_fun,Stop}} =
 			    lists:keysearch(stop_fun,1,Opts),
-			put_activity_id(Aid,Stop),
 			Aid;
 		    _ ->
 			abort(no_transaction)
@@ -2882,14 +2876,3 @@ do_fixtable(Tab, Store) ->
 	    end,
 	    ok
     end.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Mnemosyne exclusive
-
-get_activity_id() ->
-    get(mnesia_activity_state).
-
-put_activity_id(Activity) ->
-    mnesia_tm:put_activity_id(Activity).
-put_activity_id(Activity,Fun) ->
-    mnesia_tm:put_activity_id(Activity,Fun).
