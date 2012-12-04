@@ -64,7 +64,7 @@ bif_clashes(Config) when is_list(Config) ->
              ">>,
            [return_warnings],
 	   {error,
-	    [{4, erl_lint,{call_to_redefined_old_bif,{length,1}}}], []} }],
+	    [{{4,18}, erl_lint,{call_to_redefined_old_bif,{length,1}}}], []} }],
     ?line [] = run(Config, Ts),
     Ts1 = [{bif_clashes2,
            <<"
@@ -75,7 +75,7 @@ bif_clashes(Config) when is_list(Config) ->
              ">>,
            [return_warnings],
 	    {error,
-	     [{3, erl_lint,{redefine_old_bif_import,{length,1}}}], []} }],
+	     [{{3,16}, erl_lint,{redefine_old_bif_import,{length,1}}}], []} }],
     ?line [] = run(Config, Ts1),
     Ts00 = [{bif_clashes3,
            <<"
@@ -112,7 +112,7 @@ bif_clashes(Config) when is_list(Config) ->
              ">>,
            [return_warnings],
 	   {warning,
-	    [{4, erl_lint,{call_to_redefined_bif,{binary_part,3}}}]} }],
+	    [{{4,18}, erl_lint,{call_to_redefined_bif,{binary_part,3}}}]} }],
     ?line [] = run(Config, Ts000),
     Ts111 = [{bif_clashes6,
            <<"
@@ -123,7 +123,7 @@ bif_clashes(Config) when is_list(Config) ->
              ">>,
            [return_warnings],
 	    {warning,
-	     [{3, erl_lint,{redefine_bif_import,{binary_part,3}}}]} }],
+	     [{{3,16}, erl_lint,{redefine_bif_import,{binary_part,3}}}]} }],
     ?line [] = run(Config, Ts111),
     Ts2 = [{bif_clashes7,
            <<"
@@ -137,7 +137,7 @@ bif_clashes(Config) when is_list(Config) ->
              ">>,
            [],
           {error,
-           [{7,erl_lint,{define_import,{length,1}}}],
+           [{{7,15},erl_lint,{define_import,{length,1}}}],
            []} }],
     ?line [] = run2(Config, Ts2),
     Ts3 = [{bif_clashes8,
@@ -151,7 +151,7 @@ bif_clashes(Config) when is_list(Config) ->
              ">>,
            [],
           {error,
-           [{4,erl_lint,{illegal_guard_local_call,{length,1}}}],
+           [{{4,25},erl_lint,{illegal_guard_local_call,{length,1}}}],
            []} }],
     ?line [] = run2(Config, Ts3),
     Ts4 = [{bif_clashes9,
@@ -164,7 +164,7 @@ bif_clashes(Config) when is_list(Config) ->
              ">>,
            [],
           {error,
-           [{5,erl_lint,{illegal_guard_local_call,{length,1}}}],
+           [{{5,25},erl_lint,{illegal_guard_local_call,{length,1}}}],
            []} }],
     ?line [] = run2(Config, Ts4),
 
@@ -185,7 +185,7 @@ column_number(Config) when is_list(Config) ->
 %% Tests that a head mismatch is reported on the correct line (OTP-2125).
 head_mismatch_line(Config) when is_list(Config) ->
     ?line [E|_] = get_compilation_errors(Config, "head_mismatch_line"),
-    ?line {26, Mod, Reason} = E,
+    ?line {{26, 1}, Mod, Reason} = E,
     ?line Mod:format_error(Reason),
     ok.
 
@@ -211,7 +211,7 @@ warnings_as_errors(Config) when is_list(Config) ->
 	    [warnings_as_errors, export_all, {outdir, OutDir}],
 	    {error,
 	     [],
-	     [{3,erl_lint,{unused_var,'A'}}]} }],
+	     [{{3,18},erl_lint,{unused_var,'A'}}]} }],
     ?line [] = run(Ts1, TestFile, write_beam),
     ?line false = filelib:is_regular(BeamFile),
 
@@ -223,7 +223,7 @@ warnings_as_errors(Config) when is_list(Config) ->
              ">>,
 	    [return_warnings, export_all, {outdir, OutDir}],
 	    {warning,
-	       [{3,erl_lint,{unused_var,'A'}}]} }],
+	       [{{3,18},erl_lint,{unused_var,'A'}}]} }],
 
     ?line [] = run(Ts2, TestFile, write_beam),
     ?line true = filelib:is_regular(BeamFile),
